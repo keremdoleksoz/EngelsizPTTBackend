@@ -1,0 +1,30 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <h1>Şube Erişilebilirlik Sonuçları</h1>
+  <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="border-bottom: 1px solid #ccc; padding: 8px;">Şube</th>
+        <th style="border-bottom: 1px solid #ccc; padding: 8px;">Erişilebilirlik Skoru</th>
+        <th style="border-bottom: 1px solid #ccc; padding: 8px;">Detay</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for result in results %}
+        <tr>
+          <td style="padding: 8px;">{{ result.branch }}</td>
+          <td style="padding: 8px;">{{ result.score_percent }}%</td>
+          <td style="padding: 8px;">
+            <a href="{% url 'admin:results_detail' result.branch_id %}">Detaya Git</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 10px;">Henüz veri yok.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

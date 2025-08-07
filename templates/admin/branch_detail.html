@@ -1,0 +1,57 @@
+{% extends "admin/base_site.html" %}
+{% load custom_tags %}
+{% block content %}
+  <h1>{{ branch.name }} - Erişilebilirlik Detayı</h1>
+
+  <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Kategori</th>
+        <th>Sağlanan / Toplam</th>
+        <th>Durum</th>
+        <th>Eksik ve Yetersiz Alanlar</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for category, result in results.items %}
+        <tr>
+          <td style="padding: 8px;">{{ category|capfirst }} Engelliler</td>
+          <td style="padding: 8px;">{{ result.fulfilled }} / {{ result.total }}</td>
+          <td style="padding: 8px;">
+            {% if result.complete %}
+              🎖️ Tüm kriterler sağlandı!
+            {% else %}
+              ❌ Eksikler var
+            {% endif %}
+          </td>
+          <td style="padding: 8px;">
+            {% if not result.complete %}
+              <ul style="margin: 0; padding-left: 16px;">
+                {% for field, count in result.missing_fields.items %}
+                  {% if count > 0 %}
+                    <li>❌ {{ field_labels|get_item:field }} —> eksik</li>
+                  {% endif %}
+                {% endfor %}
+                {% for field, count in result.partial_fields.items %}
+                  {% if count > 0 %}
+                    <li>⚠️ {{ field_labels|get_item:field }} —> var ama yetersiz</li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% else %}
+              <span style="color: green;">Tüm kriterler mevcut</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <br>
+  <a href="{% url 'admin:results' %}">← Geri Dön</a>
+{% endblock %}
+
+{% comment %}
+  field_labels sözlüğü views.py'den context olarak gönderilmeli.
+  Ayrıca {{ field_labels|get_item:field }} çalışması için aşağıdaki templatetag tanımı yapılmalı:
+{% endcomment %}
